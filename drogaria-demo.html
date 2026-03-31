@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avalie sua experiência</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Fraunces:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7f9;
+    --white: #ffffff;
+    --surface2: #f0f4f8;
+    --blue: #1a5fcc;
+    --blue-light: #e8f0fc;
+    --blue-mid: #4a80e0;
+    --green: #0e8a5a;
+    --green-light: #e6f5ee;
+    --red-soft: #fdf0f0;
+    --text: #1a1d23;
+    --text-muted: #6b7280;
+    --text-dim: #9ca3af;
+    --border: #e5e8ed;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px 48px;
+  }
+  .card { background: var(--white); border-radius: 20px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); max-width: 420px; width: 100%; overflow: hidden; }
+  .header-band { background: var(--blue); padding: 28px 28px 24px; text-align: center; position: relative; }
+  .header-band::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 20px; background: var(--white); border-radius: 20px 20px 0 0; }
+  .logo-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 100px; padding: 6px 14px; font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 14px; }
+  .header-band h1 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: #fff; line-height: 1.3; }
+  .header-band p { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 6px; }
+  .body { padding: 20px 28px 32px; }
+  .progress-wrap { margin-bottom: 24px; }
+  .progress-bar-bg { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+  .progress-bar-fill { height: 100%; background: var(--blue); border-radius: 4px; transition: width 0.4s ease; }
+  .progress-label { font-size: 11px; color: var(--text-dim); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .step { display: none; }
+  .step.active { display: block; animation: fadeUp 0.28s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .question-title { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 400; line-height: 1.45; margin-bottom: 20px; }
+  .stars { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+  .star { font-size: 38px; cursor: pointer; transition: transform 0.15s, filter 0.15s; filter: grayscale(1) opacity(0.25); user-select: none; line-height: 1; }
+  .star.lit { filter: grayscale(0) opacity(1); }
+  .star:hover { transform: scale(1.2); }
+  .star-label { text-align: center; font-size: 13px; color: var(--text-muted); min-height: 20px; margin-bottom: 20px; }
+  .yn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .yn-card { border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px 12px; text-align: center; cursor: pointer; transition: all 0.18s; }
+  .yn-card:hover { border-color: var(--blue-mid); background: var(--blue-light); }
+  .yn-card.selected-yes { border-color: var(--green); background: var(--green-light); }
+  .yn-card.selected-no { border-color: #e05050; background: var(--red-soft); }
+  .yn-card .yn-emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+  .yn-card .yn-label { font-size: 14px; font-weight: 500; }
+  .nps-grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; margin-bottom: 6px; }
+  .nps-btn { aspect-ratio: 1; border: 1.5px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 8px; font-size: 11px; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.15s; }
+  .nps-btn:hover { border-color: var(--blue-mid); color: var(--blue); background: var(--blue-light); }
+  .nps-btn.selected { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .nps-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 20px; }
+  textarea { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; padding: 14px 16px; resize: none; outline: none; transition: border-color 0.2s; margin-bottom: 16px; }
+  textarea:focus { border-color: var(--blue-mid); background: #fff; }
+  textarea::placeholder { color: var(--text-dim); }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
+  .field input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; padding: 11px 14px; outline: none; transition: border-color 0.2s; }
+  .field input:focus { border-color: var(--blue-mid); background: #fff; }
+  .privacy-note { font-size: 11px; color: var(--text-dim); text-align: center; margin-bottom: 16px; }
+  .btn { width: 100%; padding: 13px; border-radius: var(--radius); border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #1650b0; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,95,204,0.3); }
+  .btn-primary:active { transform: translateY(0); box-shadow: none; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-ghost { background: transparent; color: var(--text-muted); border: 1.5px solid var(--border); margin-top: 10px; font-weight: 500; }
+  .btn-ghost:hover { border-color: #c0c8d4; color: var(--text); }
+
+  /* ROLETA */
+  .wheel-section { text-align: center; margin-bottom: 20px; }
+  .wheel-title { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; margin-bottom: 4px; }
+  .wheel-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+  .wheel-wrap { position: relative; display: inline-block; margin-bottom: 4px; }
+  .wheel-pointer { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 22px solid var(--blue); z-index: 10; }
+  #wheel { display: block; border-radius: 50%; border: 3px solid var(--blue); box-shadow: 0 4px 20px rgba(26,95,204,0.2); }
+
+  /* Prêmio */
+  .prize-card { border-radius: 16px; padding: 22px 20px; text-align: center; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .prize-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+  .prize-emoji-big { font-size: 44px; display: block; margin-bottom: 10px; }
+  .prize-name { font-family: 'Fraunces', serif; font-size: 20px; color: #fff; margin-bottom: 4px; font-weight: 600; }
+  .prize-desc { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.5; margin-bottom: 12px; }
+  .prize-code-wrap { display: inline-block; background: rgba(255,255,255,0.18); border: 1.5px dashed rgba(255,255,255,0.5); border-radius: 10px; padding: 8px 18px; cursor: pointer; position: relative; z-index: 1; }
+  .prize-code { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.1em; }
+  .prize-code-hint { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+
+  /* Google */
+  .google-cta { background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; margin-bottom: 16px; }
+  .google-cta h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .google-cta p { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+  .btn-google { background: #fff; color: #3c4043; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 16px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.18s; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .btn-google:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.14); transform: translateY(-1px); }
+  .check-circle { width: 56px; height: 56px; background: var(--green-light); border: 2px solid var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 14px; }
+  .feedback-card { background: var(--surface2); border-radius: var(--radius); padding: 20px; text-align: center; margin-bottom: 20px; }
+  .feedback-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+  .copied-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: #1a1d23; color: #fff; font-size: 13px; font-weight: 500; padding: 10px 20px; border-radius: 100px; transition: transform 0.3s; pointer-events: none; z-index: 100; }
+  .copied-toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header-band">
+    <div class="logo-pill">💊 Drogaria</div>
+    <h1>Como foi sua experiência hoje?</h1>
+    <p>Responda e concorra a brindes especiais</p>
+  </div>
+  <div class="body">
+    <div class="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill" style="width:20%"></div></div>
+      <span class="progress-label" id="progress-label">Etapa 1 de 4</span>
+    </div>
+
+    <!-- STEP 0: Farmacêutico -->
+    <div class="step active" id="step-0">
+      <p class="question-title">Como você avalia o atendimento do farmacêutico?</p>
+      <div class="stars" id="stars-farm">
+        <span class="star" data-val="1">⭐</span><span class="star" data-val="2">⭐</span>
+        <span class="star" data-val="3">⭐</span><span class="star" data-val="4">⭐</span>
+        <span class="star" data-val="5">⭐</span>
+      </div>
+      <p class="star-label" id="star-label-farm">Toque para avaliar</p>
+      <button class="btn btn-primary" id="btn-0" disabled onclick="goStep(1)">Continuar</button>
+    </div>
+
+    <!-- STEP 1: Produto -->
+    <div class="step" id="step-1">
+      <p class="question-title">Você encontrou o produto que estava buscando?</p>
+      <div class="yn-grid">
+        <div class="yn-card" id="yn-sim" onclick="selectYN('sim')"><span class="yn-emoji">✅</span><span class="yn-label">Sim, encontrei</span></div>
+        <div class="yn-card" id="yn-nao" onclick="selectYN('nao')"><span class="yn-emoji">❌</span><span class="yn-label">Não encontrei</span></div>
+      </div>
+      <div id="produto-faltou-wrap" style="display:none">
+        <textarea id="produto-nome" rows="2" placeholder="Qual produto você não encontrou? (opcional)"></textarea>
+      </div>
+      <button class="btn btn-primary" id="btn-1" disabled onclick="goStep(2)">Continuar</button>
+      <button class="btn btn-ghost" onclick="goStep(0)">Voltar</button>
+    </div>
+
+    <!-- STEP 2: NPS -->
+    <div class="step" id="step-2">
+      <p class="question-title">De 0 a 10, qual nota você daria para a nossa loja?</p>
+      <div class="nps-grid" id="nps-grid">
+        <button class="nps-btn" data-val="0">0</button><button class="nps-btn" data-val="1">1</button>
+        <button class="nps-btn" data-val="2">2</button><button class="nps-btn" data-val="3">3</button>
+        <button class="nps-btn" data-val="4">4</button><button class="nps-btn" data-val="5">5</button>
+        <button class="nps-btn" data-val="6">6</button><button class="nps-btn" data-val="7">7</button>
+        <button class="nps-btn" data-val="8">8</button><button class="nps-btn" data-val="9">9</button>
+        <button class="nps-btn" data-val="10">10</button>
+      </div>
+      <div class="nps-labels"><span>Péssimo</span><span>Excelente</span></div>
+      <button class="btn btn-primary" id="btn-2" disabled onclick="goStep(3)">Continuar</button>
+      <button class="btn btn-ghost" onclick="goStep(1)">Voltar</button>
+    </div>
+
+    <!-- STEP 3: Cadastro -->
+    <div class="step" id="step-3">
+      <p class="question-title">Cadastre-se e garanta seu brinde! 🎁</p>
+      <div class="field"><label>Nome completo *</label><input type="text" id="nome" placeholder="Seu nome"></div>
+      <div class="field"><label>WhatsApp *</label><input type="tel" id="telefone" placeholder="(11) 99999-9999" oninput="maskPhone(this)"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com"></div>
+      <div class="field"><label>Data de nascimento</label><input type="date" id="nascimento"></div>
+      <p class="privacy-note">🔒 Seus dados são protegidos e não serão compartilhados.</p>
+      <button class="btn btn-primary" onclick="submitForm()" id="btn-submit">Enviar e ver meu brinde!</button>
+      <button class="btn btn-ghost" onclick="goStep(2)">Voltar</button>
+      <p style="text-align:center;font-size:12px;color:var(--text-dim);margin-top:8px" id="saving-msg"></p>
+    </div>
+
+    <!-- STEP 4a: ROLETA (nota >= 7) -->
+    <div class="step" id="step-4a">
+      <div class="wheel-section">
+        <p class="wheel-title">Você ganhou uma surpresa! 🎉</p>
+        <p class="wheel-sub">Gire a roleta e descubra seu brinde</p>
+        <div class="wheel-wrap">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheel" width="270" height="270"></canvas>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="spin-btn" onclick="spinWheel()" style="max-width:240px;margin:0 auto 20px;display:block">🎡 Girar agora!</button>
+      <div id="prize-result" style="display:none">
+        <div class="prize-card" id="prize-card" onclick="copyCode()">
+          <span class="prize-emoji-big" id="prize-emoji"></span>
+          <p class="prize-name" id="prize-name"></p>
+          <p class="prize-desc" id="prize-desc"></p>
+          <div class="prize-code-wrap" id="code-wrap" style="display:none">
+            <div class="prize-code" id="prize-code"></div>
+            <div class="prize-code-hint">Toque para copiar o código</div>
+          </div>
+        </div>
+        <div class="google-cta" id="google-section" style="display:none">
+          <h3>Que ótimo que gostou! 🌟</h3>
+          <p>Ajude outras pessoas a nos encontrar no Google.</p>
+          <button class="btn-google" onclick="openGoogle()">
+            <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3c-1.6 4.3-5.7 7-11.3 7-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 5.1 29.3 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.5 0 20-7.6 20-21 0-1.3-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.9C14.4 15.5 18.9 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 5.1 29.3 3 24 3 16.3 3 9.6 7.9 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.4 36.5 26.8 37 24 37c-5.5 0-9.6-2.7-11.3-7L6 35.2C9.3 40.8 16.1 45 24 45z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.1-2.2 3.9-4 5.2l6.2 5.2C41.2 35 44 30 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
+            Avaliar no Google (5 ⭐)
+          </button>
+        </div>
+        <p style="text-align:center;font-size:12px;color:var(--text-dim)">Apresente este código no caixa na próxima visita.</p>
+      </div>
+    </div>
+
+    <!-- STEP 4b: SEM ROLETA (nota < 7) -->
+    <div class="step" id="step-4b">
+      <div style="text-align:center;margin-bottom:20px">
+        <div class="check-circle">✓</div>
+        <p style="font-size:16px;font-weight:600;margin-bottom:6px">Obrigado pela sua opinião!</p>
+      </div>
+      <div class="feedback-card">
+        <p>Ficamos tristes em saber que a experiência não foi perfeita.</p>
+        <p style="margin-top:10px">Seu feedback é muito valioso — nossa equipe vai analisar e trabalhar para te surpreender na próxima visita. 💙</p>
+      </div>
+      <p style="text-align:center;font-size:12px;color:var(--text-dim)">Volte sempre — prometemos melhorar!</p>
+    </div>
+
+  </div>
+</div>
+<div class="copied-toast" id="toast">Código copiado! ✓</div>
+
+<script>
+const APPS_SCRIPT_URL  = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec';
+const GOOGLE_REVIEWS_URL = 'https://g.page/r/SEU_PLACE_ID/review';
+const NOTA_MINIMA_ROLETA  = 7;
+const NOTA_MINIMA_GOOGLE  = 9;
+
+const prizes = [
+  { emoji:'💊', name:'1 Dipirona grátis!',       desc:'Resgate 1 cx de Dipirona 500mg no caixa',           code:'DIPI1',   color:'#1e56b8' },
+  { emoji:'🧴', name:'10% OFF na próxima!',       desc:'Desconto em qualquer compra acima de R$30',          code:'DESC10',  color:'#0a7a4a' },
+  { emoji:'🧼', name:'Sabonete grátis!',          desc:'Resgate 1 sabonete (até R$5) no caixa',             code:'SABAO1',  color:'#6d28d9' },
+  { emoji:'😷', name:'5 máscaras grátis!',        desc:'Resgate 5 máscaras descartáveis no caixa',          code:'MASC5',   color:'#0369a1' },
+  { emoji:'🪥', name:'Fio dental grátis!',        desc:'Resgate 1 fio dental no caixa',                     code:'FIOD1',   color:'#b45309' },
+  { emoji:'🌸', name:'Amostra de perfume!',       desc:'Resgate 1 amostra ou sachê de perfumaria',          code:'PERF1',   color:'#be185d' },
+  { emoji:'💧', name:'Protetor labial grátis!',   desc:'Resgate 1 protetor labial no caixa',                code:'LABIAL1', color:'#047857' },
+  { emoji:'🎁', name:'15% OFF higiene pessoal!',  desc:'15% de desconto em produtos de higiene pessoal',    code:'HIG15',   color:'#b91c1c' },
+];
+
+let answers = { farmaceutico:0, encontrou:'', produto_faltou:'', nps:-1, nome:'', telefone:'', email:'', nascimento:'' };
+let currentStep = 0;
+let spinning = false;
+let wheelAngle = 0;
+let wonPrize = null;
+
+function goStep(id) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = id;
+  document.getElementById('step-' + id).classList.add('active');
+  const pct = { 0:20, 1:40, 2:60, 3:80, '4a':100, '4b':100 };
+  const lbl = { 0:'Etapa 1 de 4', 1:'Etapa 2 de 4', 2:'Etapa 3 de 4', 3:'Etapa 4 de 4', '4a':'Concluído!', '4b':'Concluído!' };
+  document.getElementById('progress-fill').style.width = (pct[id] || 100) + '%';
+  document.getElementById('progress-label').textContent = lbl[id] || '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (id === '4a') setTimeout(drawWheel, 60);
+}
+
+document.querySelectorAll('#stars-farm .star').forEach(star => {
+  star.addEventListener('click', () => {
+    const val = parseInt(star.dataset.val);
+    answers.farmaceutico = val;
+    document.querySelectorAll('#stars-farm .star').forEach((s,i) => s.classList.toggle('lit', i < val));
+    const lbls = ['','Muito ruim 😞','Ruim 😕','Regular 😐','Bom 😊','Excelente 🤩'];
+    document.getElementById('star-label-farm').textContent = lbls[val];
+    document.getElementById('btn-0').disabled = false;
+  });
+});
+
+function selectYN(v) {
+  answers.encontrou = v;
+  document.getElementById('yn-sim').className = 'yn-card' + (v==='sim' ? ' selected-yes' : '');
+  document.getElementById('yn-nao').className = 'yn-card' + (v==='nao' ? ' selected-no' : '');
+  document.getElementById('produto-faltou-wrap').style.display = v==='nao' ? 'block' : 'none';
+  document.getElementById('btn-1').disabled = false;
+}
+
+document.querySelectorAll('#nps-grid .nps-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    answers.nps = parseInt(btn.dataset.val);
+    document.querySelectorAll('#nps-grid .nps-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('btn-2').disabled = false;
+  });
+});
+
+function maskPhone(input) {
+  let v = input.value.replace(/\D/g,'').slice(0,11);
+  if (v.length >= 7) v = '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if (v.length >= 3) v = '('+v.slice(0,2)+') '+v.slice(2);
+  else if (v.length > 0) v = '('+v;
+  input.value = v;
+}
+
+function submitForm() {
+  const nome = document.getElementById('nome').value.trim();
+  const tel  = document.getElementById('telefone').value.trim();
+  if (!nome || !tel) { alert('Por favor, preencha nome e WhatsApp.'); return; }
+  answers.nome = nome; answers.telefone = tel;
+  answers.email = document.getElementById('email').value.trim();
+  answers.nascimento = document.getElementById('nascimento').value;
+  answers.produto_faltou = (document.getElementById('produto-nome')||{}).value||'';
+
+  const btn = document.getElementById('btn-submit');
+  btn.textContent = 'Enviando...'; btn.disabled = true;
+  document.getElementById('saving-msg').textContent = 'Salvando...';
+
+  const params = new URLSearchParams({
+    timestamp: new Date().toLocaleString('pt-BR'), segmento:'drogaria',
+    nome: answers.nome, telefone: answers.telefone, email: answers.email, nascimento: answers.nascimento,
+    farmaceutico: answers.farmaceutico, encontrou_produto: answers.encontrou,
+    produto_faltou: answers.produto_faltou, nps: answers.nps,
+    ganhou_roleta: answers.nps >= NOTA_MINIMA_ROLETA ? 'sim' : 'nao',
+  });
+
+  fetch(APPS_SCRIPT_URL + '?' + params.toString(), { method:'GET', mode:'no-cors' })
+    .then(() => goStep(answers.nps >= NOTA_MINIMA_ROLETA ? '4a' : '4b'))
+    .catch(() => goStep(answers.nps >= NOTA_MINIMA_ROLETA ? '4a' : '4b'));
+}
+
+// ---- ROLETA ----
+function drawWheel() {
+  const canvas = document.getElementById('wheel');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width/2, cy = canvas.height/2, r = cx - 4;
+  const arc = (2*Math.PI) / prizes.length;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  prizes.forEach((p, i) => {
+    const start = arc*i + (wheelAngle*Math.PI/180);
+    const end = start + arc;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end); ctx.closePath();
+    ctx.fillStyle = p.color; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + arc/2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '600 11px Plus Jakarta Sans, sans-serif';
+    const words = p.name.split(' ');
+    const label = p.emoji + ' ' + words.slice(0, 2).join(' ');
+    ctx.fillText(label, r - 8, 5);
+    ctx.restore();
+  });
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 22, 0, 2*Math.PI);
+  ctx.fillStyle = '#fff'; ctx.fill();
+  ctx.strokeStyle = '#1a5fcc'; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.fillStyle = '#1a5fcc';
+  ctx.font = 'bold 10px Plus Jakarta Sans, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('GO', cx, cy);
+}
+
+function spinWheel() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spin-btn').disabled = true;
+  document.getElementById('spin-btn').textContent = 'Girando...';
+
+  const idx = Math.floor(Math.random() * prizes.length);
+  wonPrize = prizes[idx];
+
+  const arc = 360 / prizes.length;
+  const stopAngle = 360 - (idx * arc) - (arc / 2);
+  const totalSpin = 360 * 8 + stopAngle;
+  const startAngle = wheelAngle;
+  const target = startAngle + totalSpin;
+  const duration = 4500;
+  const t0 = performance.now();
+
+  function animate(now) {
+    const elapsed = now - t0;
+    const t = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 4);
+    wheelAngle = startAngle + (target - startAngle) * ease;
+    drawWheel();
+    if (t < 1) { requestAnimationFrame(animate); }
+    else { wheelAngle = target % 360; spinning = false; showPrize(); }
+  }
+  requestAnimationFrame(animate);
+}
+
+function showPrize() {
+  document.getElementById('spin-btn').style.display = 'none';
+  const card = document.getElementById('prize-card');
+  card.style.background = wonPrize.color;
+  document.getElementById('prize-emoji').textContent = wonPrize.emoji;
+  document.getElementById('prize-name').textContent  = wonPrize.name;
+  document.getElementById('prize-desc').textContent  = wonPrize.desc;
+  document.getElementById('prize-code').textContent  = wonPrize.code;
+  document.getElementById('code-wrap').style.display = 'inline-block';
+  document.getElementById('prize-result').style.display = 'block';
+  if (answers.nps >= NOTA_MINIMA_GOOGLE) {
+    document.getElementById('google-section').style.display = 'block';
+  }
+}
+
+function copyCode() {
+  if (wonPrize) {
+    navigator.clipboard.writeText(wonPrize.code).catch(()=>{});
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+}
+
+function openGoogle() { window.open(GOOGLE_REVIEWS_URL, '_blank'); }
+</script>
+</body>
+</html>
