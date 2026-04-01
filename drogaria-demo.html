@@ -376,7 +376,7 @@ function spinWheel() {
   wonPrize = prizes[idx];
 
   const arc = 360 / prizes.length;
-  const stopAngle = 360 - (idx * arc) - (arc / 2);
+  const stopAngle = (idx * arc) + (arc / 2);
   const totalSpin = 360 * 8 + stopAngle;
   const startAngle = wheelAngle;
   const target = startAngle + totalSpin;
