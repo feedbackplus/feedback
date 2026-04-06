@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FeedBack+ CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0b1f4a;
+  --blue: #1a5fcc;
+  --blue2: #2d7be0;
+  --blue-light: #e8f0fc;
+  --gold: #f5c842;
+  --gold2: #d4a800;
+  --green: #0e8a5a;
+  --green-light: #e6f5ee;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --orange: #ea580c;
+  --orange-light: #fff7ed;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #94a3b8;
+  --border: #e2e8f0;
+  --surface: #f8fafc;
+  --white: #ffffff;
+  --radius: 12px;
+  --sidebar-w: 220px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-logo h1 { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--gold); font-weight: 800; }
+.sidebar-logo p { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.sidebar-nav { padding: 12px 10px; flex: 1; }
+.nav-section { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 10px 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer;
+  font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.6);
+  transition: all 0.15s; margin-bottom: 2px;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-item.active { background: var(--blue); color: #fff; font-weight: 500; }
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+.nav-badge { margin-left: auto; background: var(--gold); color: var(--navy); font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 100px; }
+
+/* ── MAIN ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.topbar h2 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; flex: 1; }
+.btn {
+  padding: 8px 16px; border-radius: 8px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: var(--blue2); }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--surface); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-danger { background: var(--red); color: #fff; }
+
+/* ── CONTENT ── */
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── DASHBOARD ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--white); border-radius: var(--radius); padding: 18px;
+  border: 1px solid var(--border);
+}
+.stat-card .label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.stat-card .value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--text); line-height: 1; }
+.stat-card .sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.stat-card.blue .value { color: var(--blue); }
+.stat-card.green .value { color: var(--green); }
+.stat-card.gold .value { color: var(--gold2); }
+.stat-card.red .value { color: var(--red); }
+
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dash-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; }
+.dash-card h3 { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Pipeline bars */
+.pipeline-item { margin-bottom: 12px; }
+.pipeline-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+.pipeline-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.pipeline-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+/* Agenda items */
+.agenda-item {
+  display: flex; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.agenda-item:last-child { border-bottom: none; }
+.agenda-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.agenda-info { flex: 1; }
+.agenda-info .name { font-size: 13px; font-weight: 500; }
+.agenda-info .detail { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.agenda-time { font-size: 11px; color: var(--text3); font-weight: 500; white-space: nowrap; }
+
+/* ── LEADS ── */
+.filter-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 6px 14px; border-radius: 100px; border: 1px solid var(--border);
+  background: var(--white); font-size: 12px; font-weight: 500; cursor: pointer;
+  color: var(--text2); transition: all 0.15s;
+}
+.filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.search-input {
+  padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+  background: var(--white); color: var(--text); flex: 1; min-width: 160px;
+}
+.search-input:focus { border-color: var(--blue); }
+
+.leads-table { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+.table-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr 1fr auto; gap: 0; background: var(--surface); border-bottom: 1px solid var(--border); }
+.table-header div { padding: 10px 14px; font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; }
+.lead-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr 1fr auto; gap: 0; border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+.lead-row:last-child { border-bottom: none; }
+.lead-row:hover { background: var(--surface); }
+.lead-row > div { padding: 12px 14px; font-size: 13px; display: flex; align-items: center; }
+.lead-name { font-weight: 500; }
+.lead-seg { color: var(--text2); font-size: 12px; }
+
+/* Status pills */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 500;
+}
+.status-novo { background: #dbeafe; color: #1e40af; }
+.status-contatado { background: #fef9c3; color: #854d0e; }
+.status-proposta { background: #f3e8ff; color: #6b21a8; }
+.status-fechado { background: #dcfce7; color: #166534; }
+.status-perdido { background: #fee2e2; color: #991b1b; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white); border-radius: 16px;
+  width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto;
+  transform: translateY(20px); transition: transform 0.2s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-header {
+  padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--white); z-index: 1;
+}
+.modal-header h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+.modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text3); padding: 2px 6px; }
+.modal-body { padding: 20px 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Form elements */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; }
+.form-group label span { color: var(--red); }
+.form-control {
+  width: 100%; padding: 9px 12px; border-radius: 8px;
+  border: 1px solid var(--border); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; outline: none; color: var(--text); background: var(--white);
+  transition: border-color 0.15s;
+}
+.form-control:focus { border-color: var(--blue); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* History */
+.history-item { display: flex; gap: 12px; margin-bottom: 14px; }
+.history-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); margin-top: 5px; flex-shrink: 0; }
+.history-content { flex: 1; }
+.history-content .h-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+.history-content .h-meta { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.history-add { background: var(--surface); border-radius: 8px; padding: 12px; }
+.history-add textarea { width: 100%; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; resize: none; outline: none; color: var(--text); }
+
+/* Agenda full */
+.agenda-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.agenda-card {
+  background: var(--white); border-radius: var(--radius); border: 1px solid var(--border);
+  padding: 16px; display: flex; gap: 12px; align-items: flex-start;
+}
+.agenda-card .date-box {
+  background: var(--blue-light); color: var(--blue);
+  border-radius: 8px; padding: 8px 10px; text-align: center; flex-shrink: 0;
+  min-width: 48px;
+}
+.date-box .day { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; line-height: 1; }
+.date-box .month { font-size: 10px; font-weight: 500; text-transform: uppercase; }
+.agenda-card .info { flex: 1; }
+.agenda-card .info .title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.agenda-card .info .sub { font-size: 12px; color: var(--text2); }
+.agenda-card .info .time { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.agenda-type { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 600; margin-top: 6px; }
+.type-visita { background: #dbeafe; color: #1e40af; }
+.type-followup { background: #fef9c3; color: #854d0e; }
+.type-ligacao { background: #dcfce7; color: #166534; }
+
+/* Empty state */
+.empty { text-align: center; padding: 48px 24px; color: var(--text3); }
+.empty .icon { font-size: 40px; margin-bottom: 12px; }
+.empty p { font-size: 14px; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--navy); color: #fff; font-size: 13px; font-weight: 500;
+  padding: 10px 20px; border-radius: 100px;
+  transition: transform 0.3s; pointer-events: none; z-index: 200;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: -100%; z-index: 50; transition: left 0.25s; }
+  .sidebar.open { left: 0; }
+  .topbar .menu-btn { display: flex; }
+  .dash-grid { grid-template-columns: 1fr; }
+  .table-header, .lead-row { grid-template-columns: 2fr 1fr 1fr; }
+  .table-header div:nth-child(n+4), .lead-row > div:nth-child(n+4) { display: none; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+.menu-btn { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--text); display: none; }
+.overlay-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 49; display: none; }
+.overlay-bg.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <h1>FeedBack+</h1>
+    <p>CRM da Agência</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <div class="nav-item active" onclick="goPage('dashboard')">
+      <span class="icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="goPage('leads')">
+      <span class="icon">🎯</span> Leads
+      <span class="nav-badge" id="badge-leads">0</span>
+    </div>
+    <div class="nav-item" onclick="goPage('agenda')">
+      <span class="icon">📅</span> Agenda
+      <span class="nav-badge" id="badge-agenda">0</span>
+    </div>
+    <div class="nav-section">Operação</div>
+    <div class="nav-item" onclick="goPage('clientes')">
+      <span class="icon">✅</span> Clientes Ativos
+    </div>
+  </nav>
+</div>
+<div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <h2 id="page-title">Dashboard</h2>
+    <button class="btn btn-primary" id="topbar-action" onclick="topbarAction()">+ Novo Lead</button>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="dash-grid">
+        <div class="dash-card">
+          <h3>Pipeline de Vendas</h3>
+          <div id="pipeline-chart"></div>
+        </div>
+        <div class="dash-card">
+          <h3>Próximos Compromissos</h3>
+          <div id="dash-agenda"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADS -->
+    <div class="page" id="page-leads">
+      <div class="filter-bar">
+        <input class="search-input" id="search-leads" placeholder="🔍 Buscar lead..." oninput="renderLeads()">
+        <button class="filter-btn active" data-filter="todos" onclick="setFilter(this)">Todos</button>
+        <button class="filter-btn" data-filter="novo" onclick="setFilter(this)">Novo</button>
+        <button class="filter-btn" data-filter="contatado" onclick="setFilter(this)">Contatado</button>
+        <button class="filter-btn" data-filter="proposta" onclick="setFilter(this)">Proposta</button>
+        <button class="filter-btn" data-filter="fechado" onclick="setFilter(this)">Fechado</button>
+        <button class="filter-btn" data-filter="perdido" onclick="setFilter(this)">Perdido</button>
+      </div>
+      <div class="leads-table">
+        <div class="table-header">
+          <div>Estabelecimento</div>
+          <div>Segmento</div>
+          <div>Status</div>
+          <div>Próximo contato</div>
+          <div>Responsável</div>
+          <div></div>
+        </div>
+        <div id="leads-list"></div>
+      </div>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="page" id="page-agenda">
+      <div class="filter-bar" style="margin-bottom:16px">
+        <button class="filter-btn active" data-afilter="todos" onclick="setAgFilter(this)">Todos</button>
+        <button class="filter-btn" data-afilter="visita" onclick="setAgFilter(this)">Visitas</button>
+        <button class="filter-btn" data-afilter="followup" onclick="setAgFilter(this)">Follow-ups</button>
+        <button class="filter-btn" data-afilter="ligacao" onclick="setAgFilter(this)">Ligações</button>
+      </div>
+      <div class="agenda-grid" id="agenda-list"></div>
+    </div>
+
+    <!-- CLIENTES ATIVOS -->
+    <div class="page" id="page-clientes">
+      <div class="leads-table">
+        <div class="table-header" style="grid-template-columns: 2fr 1fr 1fr 1fr auto">
+          <div>Loja</div>
+          <div>Segmento</div>
+          <div>Mensalidade</div>
+          <div>Desde</div>
+          <div></div>
+        </div>
+        <div id="clientes-list"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL LEAD -->
+<div class="modal-overlay" id="modal-lead">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-lead-title">Novo Lead</h3>
+      <button class="modal-close" onclick="closeModal('modal-lead')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome da loja <span>*</span></label>
+          <input class="form-control" id="f-nome" placeholder="Ex: Drogaria São João">
+        </div>
+        <div class="form-group">
+          <label>Segmento <span>*</span></label>
+          <select class="form-control" id="f-seg">
+            <option value="">Selecione...</option>
+            <option>Drogaria</option><option>Restaurante</option><option>Lanchonete</option>
+            <option>Salão de Beleza</option><option>Barbearia</option><option>Padaria</option>
+            <option>Academia</option><option>Pet Shop</option><option>Clínica</option>
+            <option>Loja de Roupa</option><option>Outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input class="form-control" id="f-tel" placeholder="(21) 99999-9999" oninput="maskPhone(this)">
+        </div>
+        <div class="form-group">
+          <label>Responsável</label>
+          <input class="form-control" id="f-resp" placeholder="Nome do dono">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Endereço</label>
+        <input class="form-control" id="f-end" placeholder="Rua, número, bairro">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status</label>
+          <select class="form-control" id="f-status">
+            <option value="novo">Novo</option>
+            <option value="contatado">Contatado</option>
+            <option value="proposta">Proposta Enviada</option>
+            <option value="fechado">Fechado ✅</option>
+            <option value="perdido">Perdido ❌</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Avaliações Google</label>
+          <input class="form-control" id="f-reviews" type="number" placeholder="Ex: 45">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Observação inicial</label>
+        <textarea class="form-control" id="f-obs" rows="2" placeholder="Como conheceu, primeira impressão..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-lead')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveLead()">Salvar Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE LEAD -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <div>
+        <h3 id="detail-title">—</h3>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px" id="detail-sub">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-detail')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row" style="margin-bottom:16px">
+        <div class="form-group">
+          <label>Status</label>
+          <select class="form-control" id="detail-status" onchange="updateStatus()"></select>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input class="form-control" id="detail-tel" oninput="maskPhone(this)">
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">Histórico de Contatos</div>
+        <div id="detail-history" style="margin-bottom:12px;max-height:200px;overflow-y:auto"></div>
+        <div class="history-add">
+          <textarea id="history-text" rows="2" placeholder="Registrar contato, observação, resultado da visita..."></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select class="form-control" id="history-type" style="flex:1;padding:6px 10px;font-size:12px">
+              <option value="ligacao">📞 Ligação</option>
+              <option value="visita">🚗 Visita</option>
+              <option value="whatsapp">💬 WhatsApp</option>
+              <option value="nota">📝 Nota</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="addHistory()">Registrar</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em">Agendar Compromisso</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo</label>
+            <select class="form-control" id="ag-tipo">
+              <option value="visita">🚗 Visita presencial</option>
+              <option value="followup">📲 Follow-up</option>
+              <option value="ligacao">📞 Ligação</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Data e hora</label>
+            <input class="form-control" type="datetime-local" id="ag-data">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Observação</label>
+          <input class="form-control" id="ag-obs" placeholder="Ex: Falar com o gerente, levar QR Code...">
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="addAgenda()">📅 Adicionar à Agenda</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="deleteLead()">Excluir</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-detail')">Fechar</button>
+      <button class="btn btn-primary" onclick="saveDetail()">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGENDA -->
+<div class="modal-overlay" id="modal-agenda">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>Novo Compromisso</h3>
+      <button class="modal-close" onclick="closeModal('modal-agenda')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Estabelecimento</label>
+        <input class="form-control" id="ag2-lead" placeholder="Nome da loja">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tipo</label>
+          <select class="form-control" id="ag2-tipo">
+            <option value="visita">🚗 Visita presencial</option>
+            <option value="followup">📲 Follow-up</option>
+            <option value="ligacao">📞 Ligação</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data e hora</label>
+          <input class="form-control" type="datetime-local" id="ag2-data">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Observação</label>
+        <input class="form-control" id="ag2-obs" placeholder="Objetivo da visita, o que levar...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-agenda')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAgenda2()">Agendar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STORAGE ──
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem('fbplus_'+k)||'null'); } catch { return null; } },
+  set: (k,v) => localStorage.setItem('fbplus_'+k, JSON.stringify(v)),
+};
+
+// ── STATE ──
+let leads = S.get('leads') || [
+  { id:1, nome:'Drogaria São João', seg:'Drogaria', tel:'(21) 98765-4321', resp:'João Silva', end:'R. XV de Novembro, 100 - Centro', status:'contatado', reviews:23, history:[{type:'visita',text:'Primeira visita. Dono demonstrou interesse, pediu para pensar.',date:'2026-04-01 14:30'}], createdAt:'2026-04-01' },
+  { id:2, nome:'Restaurante Vitória', seg:'Restaurante', tel:'(21) 96747-4478', resp:'Maria Vitória', end:'Av. Dezoito do Forte, 337 - Centro, SG', status:'novo', reviews:10, history:[], createdAt:'2026-04-02' },
+  { id:3, nome:'Lanchonete Bom Sabor', seg:'Lanchonete', tel:'(21) 3707-6583', resp:'Carlos', end:'R. Carlos Gianelli, 562 - SG', status:'proposta', reviews:38, history:[{type:'whatsapp',text:'Enviou proposta pelo WhatsApp. Cliente pediu prazo até sexta.',date:'2026-04-02 10:00'}], createdAt:'2026-04-01' },
+  { id:4, nome:'Salão Creative Beauty', seg:'Salão de Beleza', tel:'(21) 96872-4997', resp:'Carliane', end:'R. da Conceição, 141 - Centro, Niterói', status:'fechado', reviews:71, history:[{type:'visita',text:'Fechou! Pagou primeira mensalidade. QR Code entregue.',date:'2026-04-01 16:00'}], createdAt:'2026-03-31' },
+];
+let agenda = S.get('agenda') || [
+  { id:1, leadId:1, leadNome:'Drogaria São João', tipo:'followup', data:'2026-04-03T10:00', obs:'Ligar para ver se decidiu' },
+  { id:2, leadId:2, leadNome:'Restaurante Vitória', tipo:'visita', data:'2026-04-04T14:00', obs:'Levar QR Code de demonstração' },
+];
+let currentFilter = 'todos';
+let currentAgFilter = 'todos';
+let editingLeadId = null;
+let nextId = Math.max(...leads.map(l=>l.id), ...agenda.map(a=>a.id), 0) + 1;
+
+function save() {
+  S.set('leads', leads);
+  S.set('agenda', agenda);
+}
+
+// ── NAVIGATION ──
+const pages = { dashboard: 'Dashboard', leads: 'Leads', agenda: 'Agenda', clientes: 'Clientes Ativos' };
+const actions = { dashboard: null, leads: '+ Novo Lead', agenda: '+ Agendar', clientes: null };
+
+function goPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el => { if(el.textContent.toLowerCase().includes(pages[p].toLowerCase().slice(0,4))) el.classList.add('active'); });
+  document.getElementById('page-title').textContent = pages[p];
+  const btn = document.getElementById('topbar-action');
+  if(actions[p]) { btn.textContent = actions[p]; btn.style.display = ''; }
+  else btn.style.display = 'none';
+  closeSidebar();
+  if(p==='dashboard') renderDashboard();
+  if(p==='leads') renderLeads();
+  if(p==='agenda') renderAgenda();
+  if(p==='clientes') renderClientes();
+  updateBadges();
+}
+
+function topbarAction() {
+  const active = document.querySelector('.page.active').id;
+  if(active==='page-leads') openNewLead();
+  if(active==='page-agenda') openModal('modal-agenda');
+}
+
+// ── SIDEBAR ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay-bg').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay-bg').classList.remove('show');
+}
+
+// ── MODAL ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── MASK ──
+function maskPhone(input) {
+  let v = input.value.replace(/\D/g,'').slice(0,11);
+  if(v.length>=7) v='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if(v.length>=3) v='('+v.slice(0,2)+') '+v.slice(2);
+  else if(v.length>0) v='('+v;
+  input.value = v;
+}
+
+// ── STATUS ──
+const statusLabel = { novo:'Novo', contatado:'Contatado', proposta:'Proposta Enviada', fechado:'Fechado ✅', perdido:'Perdido ❌' };
+function statusPill(s) {
+  return `<span class="status-pill status-${s}">${statusLabel[s]||s}</span>`;
+}
+
+// ── BADGES ──
+function updateBadges() {
+  document.getElementById('badge-leads').textContent = leads.filter(l=>l.status==='novo').length;
+  document.getElementById('badge-agenda').textContent = agenda.length;
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const total = leads.length;
+  const fechados = leads.filter(l=>l.status==='fechado').length;
+  const faturamento = fechados * 147;
+  const novos = leads.filter(l=>l.status==='novo').length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card blue"><div class="label">Total de Leads</div><div class="value">${total}</div><div class="sub">na carteira</div></div>
+    <div class="stat-card gold"><div class="label">Novos</div><div class="value">${novos}</div><div class="sub">aguardando contato</div></div>
+    <div class="stat-card green"><div class="label">Clientes Ativos</div><div class="value">${fechados}</div><div class="sub">assinantes</div></div>
+    <div class="stat-card green"><div class="label">MRR</div><div class="value">R$${faturamento.toLocaleString('pt-BR')}</div><div class="sub">receita mensal</div></div>
+    <div class="stat-card red"><div class="label">Perdidos</div><div class="value">${leads.filter(l=>l.status==='perdido').length}</div><div class="sub">este ciclo</div></div>
+    <div class="stat-card blue"><div class="label">Taxa Fechamento</div><div class="value">${total>0?Math.round(fechados/total*100):0}%</div><div class="sub">conversão</div></div>
+  `;
+
+  const counts = {};
+  ['novo','contatado','proposta','fechado','perdido'].forEach(s=>counts[s]=leads.filter(l=>l.status===s).length);
+  const colors = {novo:'#3b82f6',contatado:'#f59e0b',proposta:'#8b5cf6',fechado:'#10b981',perdido:'#ef4444'};
+  document.getElementById('pipeline-chart').innerHTML = Object.entries(counts).map(([s,c])=>`
+    <div class="pipeline-item">
+      <div class="pipeline-label"><span>${statusLabel[s]}</span><span>${c}</span></div>
+      <div class="pipeline-bar"><div class="pipeline-fill" style="width:${total>0?c/total*100:0}%;background:${colors[s]}"></div></div>
+    </div>
+  `).join('');
+
+  const next = [...agenda].sort((a,b)=>new Date(a.data)-new Date(b.data)).slice(0,5);
+  const typeColors = {visita:'#3b82f6',followup:'#f59e0b',ligacao:'#10b981'};
+  document.getElementById('dash-agenda').innerHTML = next.length ? next.map(a=>`
+    <div class="agenda-item">
+      <div class="agenda-dot" style="background:${typeColors[a.tipo]||'#94a3b8'}"></div>
+      <div class="agenda-info">
+        <div class="name">${a.leadNome}</div>
+        <div class="detail">${a.obs||'—'}</div>
+      </div>
+      <div class="agenda-time">${formatDate(a.data)}</div>
+    </div>
+  `).join('') : '<div class="empty"><div class="icon">📅</div><p>Nenhum compromisso agendado</p></div>';
+}
+
+function formatDate(dt) {
+  if(!dt) return '—';
+  const d = new Date(dt);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── LEADS ──
+function setFilter(btn) {
+  document.querySelectorAll('.filter-btn[data-filter]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.filter;
+  renderLeads();
+}
+
+function renderLeads() {
+  const q = (document.getElementById('search-leads')?.value||'').toLowerCase();
+  let list = leads.filter(l => {
+    const match = currentFilter==='todos' || l.status===currentFilter;
+    const search = !q || l.nome.toLowerCase().includes(q) || l.seg.toLowerCase().includes(q) || (l.resp||'').toLowerCase().includes(q);
+    return match && search;
+  });
+  list.sort((a,b) => {
+    const order = ['novo','contatado','proposta','fechado','perdido'];
+    return order.indexOf(a.status)-order.indexOf(b.status);
+  });
+  const nextContact = (l) => {
+    const ag = agenda.filter(a=>a.leadId===l.id).sort((a,b)=>new Date(a.data)-new Date(b.data))[0];
+    return ag ? formatDate(ag.data) : '—';
+  };
+  document.getElementById('leads-list').innerHTML = list.length ? list.map(l=>`
+    <div class="lead-row" onclick="openDetail(${l.id})">
+      <div><div class="lead-name">${l.nome}</div><div class="lead-seg">${l.end||''}</div></div>
+      <div>${l.seg}</div>
+      <div>${statusPill(l.status)}</div>
+      <div>${nextContact(l)}</div>
+      <div>${l.resp||'—'}</div>
+      <div><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDetail(${l.id})">Ver</button></div>
+    </div>
+  `).join('') : '<div class="empty"><div class="icon">🎯</div><p>Nenhum lead encontrado</p></div>';
+}
+
+function openNewLead() {
+  editingLeadId = null;
+  document.getElementById('modal-lead-title').textContent = 'Novo Lead';
+  ['f-nome','f-tel','f-resp','f-end','f-obs','f-reviews'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-seg').value='';
+  document.getElementById('f-status').value='novo';
+  openModal('modal-lead');
+}
+
+function saveLead() {
+  const nome = document.getElementById('f-nome').value.trim();
+  const seg = document.getElementById('f-seg').value;
+  if(!nome||!seg){toast('⚠️ Preencha nome e segmento');return;}
+  const lead = {
+    id: editingLeadId || nextId++,
+    nome, seg,
+    tel: document.getElementById('f-tel').value,
+    resp: document.getElementById('f-resp').value,
+    end: document.getElementById('f-end').value,
+    status: document.getElementById('f-status').value,
+    reviews: parseInt(document.getElementById('f-reviews').value)||0,
+    history: editingLeadId ? leads.find(l=>l.id===editingLeadId)?.history||[] : [],
+    createdAt: new Date().toISOString().slice(0,10),
+  };
+  const obs = document.getElementById('f-obs').value.trim();
+  if(obs && !editingLeadId) lead.history.push({type:'nota',text:obs,date:new Date().toLocaleString('pt-BR')});
+  if(editingLeadId) {
+    const idx = leads.findIndex(l=>l.id===editingLeadId);
+    if(idx>=0) leads[idx]={...leads[idx],...lead};
+  } else {
+    leads.unshift(lead);
+  }
+  save(); closeModal('modal-lead'); renderLeads(); updateBadges();
+  toast(editingLeadId?'✅ Lead atualizado':'✅ Lead adicionado');
+}
+
+// ── DETAIL ──
+function openDetail(id) {
+  const l = leads.find(x=>x.id===id);
+  if(!l) return;
+  editingLeadId = id;
+  document.getElementById('detail-title').textContent = l.nome;
+  document.getElementById('detail-sub').textContent = `${l.seg} · ${l.end||''}`;
+  document.getElementById('detail-tel').value = l.tel||'';
+  const sel = document.getElementById('detail-status');
+  sel.innerHTML = Object.entries(statusLabel).map(([v,t])=>`<option value="${v}"${l.status===v?' selected':''}>${t}</option>`).join('');
+  renderHistory(l);
+  openModal('modal-detail');
+}
+
+function renderHistory(l) {
+  const icons = {ligacao:'📞',visita:'🚗',whatsapp:'💬',nota:'📝'};
+  document.getElementById('detail-history').innerHTML = l.history.length
+    ? [...l.history].reverse().map(h=>`
+      <div class="history-item">
+        <div class="history-dot"></div>
+        <div class="history-content">
+          <div class="h-text">${icons[h.type]||'📝'} ${h.text}</div>
+          <div class="h-meta">${h.date}</div>
+        </div>
+      </div>`).join('')
+    : '<div style="color:var(--text3);font-size:13px;padding:8px 0">Nenhum contato registrado ainda.</div>';
+}
+
+function addHistory() {
+  const text = document.getElementById('history-text').value.trim();
+  if(!text){toast('⚠️ Escreva algo primeiro');return;}
+  const l = leads.find(x=>x.id===editingLeadId);
+  if(!l) return;
+  l.history.push({type:document.getElementById('history-type').value, text, date:new Date().toLocaleString('pt-BR')});
+  document.getElementById('history-text').value='';
+  renderHistory(l); save(); toast('✅ Contato registrado');
+}
+
+function updateStatus() {
+  const l = leads.find(x=>x.id===editingLeadId);
+  if(l) { l.status = document.getElementById('detail-status').value; save(); renderLeads(); updateBadges(); renderDashboard(); }
+}
+
+function saveDetail() {
+  const l = leads.find(x=>x.id===editingLeadId);
+  if(l) {
+    l.tel = document.getElementById('detail-tel').value;
+    l.status = document.getElementById('detail-status').value;
+    save(); renderLeads(); updateBadges(); renderDashboard();
+    closeModal('modal-detail'); toast('✅ Salvo');
+  }
+}
+
+function deleteLead() {
+  if(!confirm('Excluir este lead?')) return;
+  leads = leads.filter(l=>l.id!==editingLeadId);
+  agenda = agenda.filter(a=>a.leadId!==editingLeadId);
+  save(); closeModal('modal-detail'); renderLeads(); updateBadges(); toast('🗑️ Lead excluído');
+}
+
+function addAgenda() {
+  const data = document.getElementById('ag-data').value;
+  const obs = document.getElementById('ag-obs').value.trim();
+  const tipo = document.getElementById('ag-tipo').value;
+  if(!data){toast('⚠️ Escolha uma data');return;}
+  const l = leads.find(x=>x.id===editingLeadId);
+  agenda.push({id:nextId++,leadId:editingLeadId,leadNome:l?.nome||'—',tipo,data,obs});
+  document.getElementById('ag-data').value='';
+  document.getElementById('ag-obs').value='';
+  save(); updateBadges(); toast('📅 Agendado!');
+}
+
+// ── AGENDA ──
+function setAgFilter(btn) {
+  document.querySelectorAll('.filter-btn[data-afilter]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentAgFilter = btn.dataset.afilter;
+  renderAgenda();
+}
+
+function renderAgenda() {
+  let list = agenda.filter(a=>currentAgFilter==='todos'||a.tipo===currentAgFilter);
+  list.sort((a,b)=>new Date(a.data)-new Date(b.data));
+  const typeLabel = {visita:'Visita',followup:'Follow-up',ligacao:'Ligação'};
+  const typeClass = {visita:'type-visita',followup:'type-followup',ligacao:'type-ligacao'};
+  document.getElementById('agenda-list').innerHTML = list.length ? list.map(a=>{
+    const d = new Date(a.data);
+    return `<div class="agenda-card">
+      <div class="date-box">
+        <div class="day">${d.getDate().toString().padStart(2,'0')}</div>
+        <div class="month">${d.toLocaleString('pt-BR',{month:'short'}).replace('.','')}</div>
+      </div>
+      <div class="info">
+        <div class="title">${a.leadNome}</div>
+        <div class="sub">${a.obs||'—'}</div>
+        <div class="time">⏰ ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+        <span class="agenda-type ${typeClass[a.tipo]}">${typeLabel[a.tipo]}</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto;align-self:flex-start" onclick="removeAgenda(${a.id})">✓ Feito</button>
+    </div>`;
+  }).join('') : '<div class="empty" style="grid-column:1/-1"><div class="icon">📅</div><p>Nenhum compromisso agendado</p></div>';
+}
+
+function removeAgenda(id) {
+  agenda = agenda.filter(a=>a.id!==id);
+  save(); renderAgenda(); updateBadges(); toast('✅ Compromisso concluído');
+}
+
+function saveAgenda2() {
+  const leadNome = document.getElementById('ag2-lead').value.trim();
+  const data = document.getElementById('ag2-data').value;
+  const tipo = document.getElementById('ag2-tipo').value;
+  const obs = document.getElementById('ag2-obs').value.trim();
+  if(!leadNome||!data){toast('⚠️ Preencha estabelecimento e data');return;}
+  agenda.push({id:nextId++,leadId:null,leadNome,tipo,data,obs});
+  save(); closeModal('modal-agenda'); renderAgenda(); updateBadges(); toast('📅 Agendado!');
+}
+
+// ── CLIENTES ──
+function renderClientes() {
+  const ativos = leads.filter(l=>l.status==='fechado');
+  const list = document.getElementById('clientes-list');
+  list.style.gridTemplateColumns = '2fr 1fr 1fr 1fr auto';
+  list.innerHTML = ativos.length ? ativos.map(l=>`
+    <div class="lead-row" style="grid-template-columns:2fr 1fr 1fr 1fr auto" onclick="openDetail(${l.id})">
+      <div><div class="lead-name">${l.nome}</div><div class="lead-seg">${l.resp||''}</div></div>
+      <div>${l.seg}</div>
+      <div style="color:var(--green);font-weight:600">R$147/mês</div>
+      <div>${l.createdAt||'—'}</div>
+      <div><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDetail(${l.id})">Ver</button></div>
+    </div>
+  `).join('') : '<div class="empty"><div class="icon">✅</div><p>Nenhum cliente ativo ainda. Vá vender! 🚀</p></div>';
+}
+
+// ── INIT ──
+renderDashboard(); updateBadges();
+// Set default datetime
+const now = new Date(); now.setMinutes(0);
+const iso = now.toISOString().slice(0,16);
+document.getElementById('ag-data').value = iso;
+document.getElementById('ag2-data').value = iso;
+</script>
+</body>
+</html>
