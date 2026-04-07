@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>FeedBack+ | Como foi sua experiência?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0f1a;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --gold: #d4a843;
+  --gold2: #f0c866;
+  --blue: #1a5fcc;
+  --green: #0e8a5a;
+  --red: #dc2626;
+  --white: #f5f0e8;
+  --muted: #94a3b8;
+  --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 24px;
+  width: 100%; max-width: 420px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  animation: slideUp 0.5s ease;
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+.card-header {
+  background: linear-gradient(135deg, #0b1f4a 0%, #1a3a6b 100%);
+  padding: 28px 24px 22px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.card-header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold));
+}
+.card-header .badge {
+  display: inline-block;
+  background: rgba(212,168,67,0.15);
+  border: 1px solid rgba(212,168,67,0.4);
+  color: var(--gold2); font-size: 11px; font-weight: 500;
+  padding: 4px 14px; border-radius: 100px; margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.card-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 700; color: var(--white);
+  margin-bottom: 6px; line-height: 1.3;
+}
+.card-header p { font-size: 13px; color: var(--muted); }
+
+.card-body { padding: 24px; }
+
+/* Steps */
+.step { display: none; animation: fadeIn 0.35s ease; }
+.step.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
+
+.step-label { font-size: 11px; font-weight: 500; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.step-title { font-size: 17px; font-weight: 600; color: var(--white); margin-bottom: 20px; line-height: 1.4; }
+
+/* Stars */
+.stars { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.star {
+  font-size: 36px; cursor: pointer;
+  filter: grayscale(1) opacity(0.4);
+  transition: all 0.15s; transform-origin: center;
+}
+.star:hover, .star.active { filter: none; transform: scale(1.15); }
+
+/* Radio options */
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.option {
+  background: var(--surface2); border: 1.5px solid transparent;
+  border-radius: 12px; padding: 14px 16px;
+  cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 12px; font-size: 14px;
+}
+.option:hover { border-color: var(--blue); }
+.option.selected { border-color: var(--gold); background: rgba(212,168,67,0.08); }
+.option .opt-icon { font-size: 20px; }
+
+/* Textarea */
+.textarea-wrap { margin-bottom: 24px; }
+textarea {
+  width: 100%; background: var(--surface2);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px; color: var(--white);
+  font-family: 'DM Sans', sans-serif; font-size: 14px;
+  padding: 14px; resize: none; outline: none;
+  transition: border-color 0.15s;
+}
+textarea:focus { border-color: var(--gold); }
+textarea::placeholder { color: var(--muted); }
+
+/* Buttons */
+.btn {
+  width: 100%; padding: 14px; border-radius: 100px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-primary { background: var(--gold); color: #0a0f1a; }
+.btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-ghost { background: transparent; color: var(--muted); font-size: 13px; margin-top: 10px; }
+.btn-ghost:hover { color: var(--white); }
+
+/* Progress */
+.progress { display: flex; gap: 4px; justify-content: center; margin-bottom: 20px; }
+.progress-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); transition: all 0.3s;
+}
+.progress-dot.active { background: var(--gold); width: 20px; border-radius: 3px; }
+.progress-dot.done { background: var(--green); }
+
+/* Roleta */
+.roleta-container { text-align: center; padding: 10px 0; }
+.roleta-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto 20px; }
+.roleta-pointer {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0; z-index: 10;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 24px solid var(--gold);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+canvas#roleta { border-radius: 50%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.btn-girar {
+  background: var(--gold); color: #0a0f1a;
+  border: none; border-radius: 100px;
+  padding: 14px 32px; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-girar:hover { background: var(--gold2); transform: translateY(-2px); }
+.btn-girar:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.premio-reveal {
+  display: none; background: rgba(14,138,90,0.15);
+  border: 1.5px solid var(--green); border-radius: 16px;
+  padding: 20px; margin-top: 16px; text-align: center;
+}
+.premio-reveal .emoji { font-size: 40px; display: block; margin-bottom: 8px; }
+.premio-reveal h3 { font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+.premio-reveal p { font-size: 13px; color: var(--muted); }
+
+/* Negativo */
+.negativo-box {
+  background: rgba(220,38,38,0.08); border: 1.5px solid rgba(220,38,38,0.3);
+  border-radius: 16px; padding: 20px; text-align: center;
+}
+.negativo-box .emoji { font-size: 40px; display: block; margin-bottom: 12px; }
+.negativo-box h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+.negativo-box p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* Google */
+.google-box {
+  background: var(--surface2); border-radius: 16px;
+  padding: 20px; text-align: center; margin-bottom: 16px;
+}
+.google-box .g-stars { font-size: 28px; margin-bottom: 8px; }
+.google-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.google-box p { font-size: 13px; color: var(--muted); }
+.btn-google {
+  width: 100%; padding: 14px; border-radius: 100px; border: none;
+  background: #4285f4; color: white;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-google:hover { background: #3367d6; transform: translateY(-1px); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="badge">🍽️ Pesquisa de Satisfação</div>
+    <h1>Como foi sua experiência hoje?</h1>
+    <p>Responda e ganhe um brinde especial 🎁</p>
+  </div>
+
+  <div class="card-body">
+    <!-- Progress -->
+    <div class="progress" id="progress">
+      <div class="progress-dot active" id="dot-0"></div>
+      <div class="progress-dot" id="dot-1"></div>
+      <div class="progress-dot" id="dot-2"></div>
+      <div class="progress-dot" id="dot-3"></div>
+    </div>
+
+    <!-- STEP 0: Nota geral -->
+    <div class="step active" id="step-0">
+      <div class="step-label">Pergunta 1 de 4</div>
+      <div class="step-title">Qual nota você dá para a sua experiência geral?</div>
+      <div class="stars" id="stars-geral">
+        <span class="star" data-val="1">⭐</span>
+        <span class="star" data-val="2">⭐</span>
+        <span class="star" data-val="3">⭐</span>
+        <span class="star" data-val="4">⭐</span>
+        <span class="star" data-val="5">⭐</span>
+      </div>
+      <button class="btn btn-primary" id="btn-0" onclick="nextStep(1)" disabled>Continuar →</button>
+    </div>
+
+    <!-- STEP 1: Atendimento -->
+    <div class="step" id="step-1">
+      <div class="step-label">Pergunta 2 de 4</div>
+      <div class="step-title">Como foi o atendimento da equipe?</div>
+      <div class="options" id="opts-atendimento">
+        <div class="option" onclick="selectOption('atendimento', 'excelente', this)"><span class="opt-icon">😍</span> Excelente — muito atencioso</div>
+        <div class="option" onclick="selectOption('atendimento', 'bom', this)"><span class="opt-icon">😊</span> Bom — atendeu bem</div>
+        <div class="option" onclick="selectOption('atendimento', 'regular', this)"><span class="opt-icon">😐</span> Regular — poderia melhorar</div>
+        <div class="option" onclick="selectOption('atendimento', 'ruim', this)"><span class="opt-icon">😕</span> Ruim — fui mal atendido</div>
+      </div>
+      <button class="btn btn-primary" id="btn-1" onclick="nextStep(2)" disabled>Continuar →</button>
+    </div>
+
+    <!-- STEP 2: Comida -->
+    <div class="step" id="step-2">
+      <div class="step-label">Pergunta 3 de 4</div>
+      <div class="step-title">E a comida — como estava?</div>
+      <div class="options" id="opts-comida">
+        <div class="option" onclick="selectOption('comida', 'otima', this)"><span class="opt-icon">🤩</span> Ótima — adorei tudo!</div>
+        <div class="option" onclick="selectOption('comida', 'boa', this)"><span class="opt-icon">😋</span> Boa — gostei bastante</div>
+        <div class="option" onclick="selectOption('comida', 'regular', this)"><span class="opt-icon">😐</span> Regular — esperava mais</div>
+        <div class="option" onclick="selectOption('comida', 'ruim', this)"><span class="opt-icon">😞</span> Ruim — não gostei</div>
+      </div>
+      <button class="btn btn-primary" id="btn-2" onclick="nextStep(3)" disabled>Continuar →</button>
+    </div>
+
+    <!-- STEP 3: Comentário -->
+    <div class="step" id="step-3">
+      <div class="step-label">Pergunta 4 de 4</div>
+      <div class="step-title">Quer deixar algum comentário? (opcional)</div>
+      <div class="textarea-wrap">
+        <textarea id="comentario" rows="4" placeholder="Conte o que mais gostou ou o que podemos melhorar..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="finalizarPesquisa()">Finalizar e ganhar brinde 🎁</button>
+    </div>
+
+    <!-- STEP 4: Roleta (nota >= 7) -->
+    <div class="step" id="step-roleta">
+      <div style="text-align:center;margin-bottom:16px">
+        <div class="step-label">Parabéns! 🎉</div>
+        <div class="step-title" style="margin-bottom:4px">Gire a roleta e ganhe seu brinde!</div>
+        <p style="font-size:13px;color:var(--muted)">Você merece por compartilhar sua experiência</p>
+      </div>
+      <div class="roleta-container">
+        <div class="roleta-wrap">
+          <div class="roleta-pointer"></div>
+          <canvas id="roleta" width="260" height="260"></canvas>
+        </div>
+        <button class="btn-girar" id="btn-girar" onclick="girarRoleta()">🎰 Girar a Roleta!</button>
+        <div class="premio-reveal" id="premio-reveal">
+          <span class="emoji" id="premio-emoji">🎁</span>
+          <h3 id="premio-nome">Parabéns!</h3>
+          <p id="premio-desc">Mostre este cupom ao caixa para resgatar</p>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="irParaGoogle()">Continuar →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: Google Reviews -->
+    <div class="step" id="step-google">
+      <div class="google-box">
+        <div class="g-stars">⭐⭐⭐⭐⭐</div>
+        <h3>Que incrível! Obrigado! 🙏</h3>
+        <p>Sua opinião ajuda outras pessoas a nos encontrar no Google. Leva só 30 segundos!</p>
+      </div>
+      <button class="btn-google" onclick="window.open('https://search.google.com/local/writereview?placeid=SEU_PLACE_ID','_blank')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Avaliar no Google Maps ⭐
+      </button>
+      <button class="btn btn-ghost" onclick="encerrar()">Pular por agora</button>
+    </div>
+
+    <!-- STEP 6: Feedback negativo -->
+    <div class="step" id="step-negativo">
+      <div class="negativo-box">
+        <span class="emoji">💙</span>
+        <h3>Obrigado pela sinceridade</h3>
+        <p>Sua opinião é muito importante para melhorarmos. A equipe vai receber seu feedback e entrar em contato em breve.</p>
+      </div>
+      <div class="textarea-wrap" style="margin-top:16px">
+        <textarea id="feedback-negativo" rows="3" placeholder="Quer nos contar o que aconteceu? (opcional)"></textarea>
+      </div>
+      <button class="btn btn-primary" style="margin-top:8px" onclick="encerrar()">Enviar feedback</button>
+    </div>
+
+    <!-- STEP 7: Encerramento -->
+    <div class="step" id="step-fim">
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:56px;margin-bottom:16px">🙏</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px">Muito obrigado!</h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6">Sua opinião nos ajuda a melhorar cada dia mais.<br>Esperamos te ver em breve! 😊</p>
+        <div style="margin-top:20px;padding:14px;background:var(--surface2);border-radius:12px;font-size:13px;color:var(--muted)">
+          Powered by <strong style="color:var(--gold)">FeedBack+</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const respostas = { geral: 0, atendimento: '', comida: '', comentario: '' };
+
+// ── STARS ──
+document.querySelectorAll('#stars-geral .star').forEach(star => {
+  star.addEventListener('click', () => {
+    const val = parseInt(star.dataset.val);
+    respostas.geral = val;
+    document.querySelectorAll('#stars-geral .star').forEach((s, i) => {
+      s.classList.toggle('active', i < val);
+    });
+    document.getElementById('btn-0').disabled = false;
+  });
+});
+
+// ── OPTIONS ──
+function selectOption(campo, valor, el) {
+  const group = el.parentElement;
+  group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  respostas[campo] = valor;
+  const step = el.closest('.step');
+  const btn = step.querySelector('.btn-primary');
+  if (btn) btn.disabled = false;
+}
+
+// ── NAVIGATION ──
+function showStep(id) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + id).classList.add('active');
+  updateProgress(id);
+}
+
+function updateProgress(step) {
+  const dots = document.querySelectorAll('.progress-dot');
+  const map = { '0': 0, '1': 1, '2': 2, '3': 3 };
+  const current = map[step] ?? -1;
+  dots.forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i === current) d.classList.add('active');
+    else if (i < current) d.classList.add('done');
+  });
+  if (['roleta','google','negativo','fim'].includes(String(step))) {
+    dots.forEach(d => d.classList.add('done'));
+  }
+}
+
+function nextStep(n) { showStep(n); }
+
+function finalizarPesquisa() {
+  respostas.comentario = document.getElementById('comentario').value;
+  if (respostas.geral >= 7) {
+    showStep('roleta');
+    initRoleta();
+  } else {
+    showStep('negativo');
+  }
+}
+
+function irParaGoogle() { showStep('google'); }
+function encerrar() { showStep('fim'); }
+
+// ── ROLETA ──
+const premios = [
+  { nome: 'Brownie Grátis', emoji: '🍫', desc: 'Na sua próxima visita · Mostre ao caixa', cor: '#b45309' },
+  { nome: '10% de Desconto', emoji: '🏷️', desc: 'Na próxima refeição · Válido por 30 dias', cor: '#1a5fcc' },
+  { nome: 'Sobremesa da Casa', emoji: '🍮', desc: 'Por conta do restaurante · Próxima visita', cor: '#0e8a5a' },
+  { nome: 'Café Expresso Grátis', emoji: '☕', desc: 'No próximo almoço ou jantar', cor: '#7c3aed' },
+  { nome: 'Suco Grátis', emoji: '🥤', desc: 'Na próxima visita · Qualquer sabor', cor: '#dc2626' },
+  { nome: 'Surpresa do Chef', emoji: '🎁', desc: 'Brinde especial exclusivo · Pergunte ao garçom', cor: '#d4a843' },
+  { nome: 'Aperitivo Grátis', emoji: '🥗', desc: 'Na próxima visita · Entrada cortesia', cor: '#0e8a5a' },
+  { nome: '15% de Desconto', emoji: '💰', desc: 'Na próxima refeição · Válido por 15 dias', cor: '#1a5fcc' },
+];
+
+let angulo = 0, girando = false, premioIdx = -1;
+
+function initRoleta() {
+  drawRoleta(0);
+}
+
+function drawRoleta(rot) {
+  const canvas = document.getElementById('roleta');
+  const ctx = canvas.getContext('2d');
+  const cx = 130, cy = 130, r = 128;
+  const n = premios.length;
+  const arc = (2 * Math.PI) / n;
+  ctx.clearRect(0, 0, 260, 260);
+  premios.forEach((p, i) => {
+    const start = rot + i * arc;
+    const end = start + arc;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = i % 2 === 0 ? p.cor : shadeColor(p.cor, -30);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + arc / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px DM Sans';
+    ctx.fillText(p.nome, r - 10, 4);
+    ctx.font = '18px serif';
+    ctx.fillText(p.emoji, r - 85, 5);
+    ctx.restore();
+  });
+  // Centro
+  ctx.beginPath();
+  ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
+  ctx.fillStyle = '#0a0f1a';
+  ctx.fill();
+  ctx.strokeStyle = '#d4a843';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+}
+
+function shadeColor(hex, amt) {
+  let r = parseInt(hex.slice(1,3),16)+amt, g = parseInt(hex.slice(3,5),16)+amt, b = parseInt(hex.slice(5,7),16)+amt;
+  return '#'+[r,g,b].map(x=>Math.min(255,Math.max(0,x)).toString(16).padStart(2,'0')).join('');
+}
+
+function girarRoleta() {
+  if (girando) return;
+  girando = true;
+  document.getElementById('btn-girar').disabled = true;
+
+  // Sorteia o prêmio
+  premioIdx = Math.floor(Math.random() * premios.length);
+  const n = premios.length;
+  const arc = (2 * Math.PI) / n;
+
+  // Calcular ângulo de parada para o prêmio selecionado
+  const totalSpins = 5 + Math.random() * 3;
+  const targetAngle = (totalSpins * 2 * Math.PI) + (2 * Math.PI - (premioIdx * arc + arc / 2));
+  const duration = 4000;
+  const start = performance.now();
+  const startAngle = angulo;
+
+  function animate(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 4);
+    angulo = startAngle + targetAngle * ease;
+    drawRoleta(angulo);
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      girando = false;
+      mostrarPremio();
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function mostrarPremio() {
+  const p = premios[premioIdx];
+  document.getElementById('premio-emoji').textContent = p.emoji;
+  document.getElementById('premio-nome').textContent = p.nome;
+  document.getElementById('premio-desc').textContent = p.desc;
+  const box = document.getElementById('premio-reveal');
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+</body>
+</html>
